@@ -1,0 +1,1 @@
+An awesome and high-availability method to record and rotate log file high concurrence in celery which have schedule tasks
