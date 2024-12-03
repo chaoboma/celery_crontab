@@ -1,7 +1,6 @@
 from celery import Celery
 from kombu import Exchange, Queue
-import logging
-from logging.handlers import TimedRotatingFileHandler
+from loguru import logger
 
 
 # celery
@@ -23,18 +22,8 @@ route = {
 app.conf.update(CELERY_QUEUES=queue, CELERY_ROUTES=route, CELERY_TIMEZONE='Asia/Shanghai', CELERY_ENABLE_UTC=False)
 
 
-class Config(object):
 
-    # 设置日志
-    log_fmt = '%(asctime)s\tFile \"%(filename)s\",line %(lineno)s\t%(levelname)s: %(message)s'
-    
-    # log_file_handler = TimedRotatingFileHandler(filename="log", when="MIDNIGHT", interval=1, backupCount=30)
-    log_file_handler = TimedRotatingFileHandler(filename="log", when="H", interval=1, backupCount=7)
-    formatter = logging.Formatter(log_fmt)
-    log_file_handler.setFormatter(formatter)
-    
-    logging.basicConfig(format=log_fmt)
-    LOGGER = logging.getLogger()
-    LOGGER.setLevel(logging.INFO)
-    
-    LOGGER.addHandler(log_file_handler)
+logger.add("/mnt/d/test/python/celery_crontab/log_{time:YYYY-MM-DD-HH:mm}.log",
+           rotation="20 minutes",  # 每10分钟（设置每天试用周期长了）旋转日志文件
+           retention="3 month"  # 保留3个月的日志文件
+           )
